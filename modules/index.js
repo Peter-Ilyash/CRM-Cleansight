@@ -1,29 +1,48 @@
 const spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
 
 function onEdit(e) {
-  const contacts = new Contacts({
-    clientSheet: spreadSheet.getSheetByName('Контакти'),
-    baseSheet: spreadSheet.getSheetByName('ContactsDB'),
-    fieldsTypesSheet: spreadSheet.getSheetByName('FieldTypes')
-  });
+  const service = new Service();
+  const {range, value, oldValue} = e;
 
-  const { range, value, oldValue } = e;
+  const sheet = range.getSheet();
+  const sheetName = sheet.getSheetName();
 
-  if (range.getSheet().getSheetName() !== 'Контакти') return;
+  if (!service.clientSheetsNames.includes(sheetName)) return;
+  if (range.getNumRows() > 1 || range.getNumColumns() > 1) return;
 
-  if (range.getNumRows() !== 1
-    || range.getNumColumns() !== 1) {
+  const fieldProjection = new FieldProjection(range, service);
+  const {contactTitle, name} = fieldProjection;
 
-    range.setValue(oldValue);
+  if (!contactTitle) return;
 
-    Browser.msgBox(
-      'Виникла помилка',
-      `У таблиці "Контакти" заборонене введення у більше ніж одну комірку`,
-      Browser.Buttons.OK);
+  const validationResult = fieldProjection.validation(value, oldValue);
 
-    return;
+  const contact = new Contact(contactTitle, service);
+  const field = new Field(name, contact, service);
+
+  if (!validationResult) return;
+
+  if (name === 'Компанія') {
+    const insertDateField = new Field('Дата внесення', contact, service);
+    Logger.log(value);
+
+    if (insertDateField.isEmpty()) {
+      const now = new Date();
+      insertDateField.setValue(now);
+    }
   }
 
-  const field = new Field(range);
-  validation(field, value, oldValue);
+  if (name === 'Дата початку тендера') {
+    contact.project(service.clientSheets['Тендери']);
+  }
+
+  if (name === 'Підписання договору' &&
+      range.getValue() === 'Підписаний') {
+    const projection = contact.project(service.clientSheets['Продаж додаткових послуг']);
+    let date = new Date();
+    date.setMonth(date.getMonth() + 3);
+    projection['Продаж дод. послуг'].setValue(date);
+  }
+  
+  field.setValue(validationResult);
 }

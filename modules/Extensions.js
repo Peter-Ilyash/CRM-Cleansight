@@ -1,7 +1,7 @@
-class Extensions {
-  static getCellByValue(container, val) {
+Extensions = {
+  getCellByValue(container, val) {
     if (Extensions.isRangeOrSheet(container) === 'sheet') {
-      const { getMaxRows, getMaxColumns } = container;
+      const {getMaxRows, getMaxColumns} = container;
       container = container.getRange(1, 1, getMaxRows(), getMaxColumns());
     }
 
@@ -26,22 +26,56 @@ class Extensions {
       if (searchResult) break;
     }
 
-    return (cords) ? container.getCell(++cords[0], ++cords[1]) : null;
-  }
+    return (cords)? container.getCell(++cords[0], ++cords[1]): null;
+  },
 
-  static getFirstSheetRow(sheet) {
+  getFirstSheetRow(sheet) {
     return sheet.getRange(1, 1, 1, sheet.getMaxColumns());
-  }
+  },
 
-  static getFirstSheetColumn(sheet) {
+  getFirstSheetColumn(sheet) {
     return sheet.getRange(1, 1, sheet.getMaxRows(), 1);
-  }
+  },
 
-  static getRowAsRange(sheet, range) {
+  getRowAsRange(sheet, range) {
     return sheet.getRange(range.getRow(), 1, 1, sheet.getMaxColumns());
-  }
+  },
 
-  static isRangeOrSheet(obj) {
+  getFirstEmptyRow(sheet) {
+    const numOfRows = sheet.getMaxRows();
+    const numOfCols = sheet.getMaxColumns();
+    
+    let emptyRow;
+
+    for (let i = 1; i <= numOfRows; i++) {
+      const row = sheet.getRange(i, 1, 1, numOfCols);
+      if (!isEmptyRow(row)) continue;
+
+      emptyRow = row;
+      break;
+    }
+
+    if (emptyRow) return emptyRow;
+
+    Logger.log('Error! Add new rows in sheet'); 
+    return null;
+
+    function isEmptyRow(row) {
+      let isEmpty = true;
+
+      for (let j = 2; j <= numOfCols; j++) {
+        const val = row.getCell(1, j).getValue();
+        if (!val) continue;
+
+        isEmpty = false;
+        break;
+      }
+
+      return isEmpty;
+    }
+  },
+
+  isRangeOrSheet(obj) {
     let type = 'range';
 
     try {
@@ -49,11 +83,38 @@ class Extensions {
       Its calling on sheet throws error*/
 
       obj.getColumn();
-    }
+    } 
     catch (err) {
       type = 'sheet';
     }
 
     return type;
-  }
+  },
+
+  cleanSheet(sheet) {
+    const {getFirstEmptyRow} = Extensions;
+
+    const rowsNum = getFirstEmptyRow(sheet).getRow();
+    const columnsNum = sheet.getMaxColumns();
+
+    const range = sheet.getRange(2, 2, rowsNum, columnsNum - 1);
+    range.setValue(null);
+  },
+
+  patchDateFormatError(days) {
+    const daysTime = (days-2)*24*60*60*1000;
+    const zeroYear = new Date('1900-01-01T00:00:00');;
+    const currentTime = zeroYear.getTime() + daysTime;
+    const currentDate = new Date(currentTime);
+
+    let currentDays = String(currentDate.getDate());
+    if (+currentDays < 10) currentDays = '0' + currentDays;
+
+    let currentMonth = String(currentDate.getMonth() + 1);
+    if (+currentMonth < 10) currentMonth = '0' + currentMonth;
+
+    let currentYear = String(currentDate.getFullYear());
+
+    return `${currentDays}.${currentMonth}.${currentYear}`;
+  } 
 }
