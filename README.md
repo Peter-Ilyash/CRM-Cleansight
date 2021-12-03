@@ -2,7 +2,9 @@
 
 ## Preview
 
-<img src="https://github.com/Peter-Ilyash/CRM-Cleansight/blob/main/assets/cover.png"> 
+<img src="https://github.com/Peter-Ilyash/CRM-Cleansight/blob/main/assets/preview-1.png">
+
+<img src="https://github.com/Peter-Ilyash/CRM-Cleansight/blob/main/assets/preview-2.png">
 
 ## Introduction
 
