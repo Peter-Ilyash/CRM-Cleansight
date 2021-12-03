@@ -12,7 +12,7 @@ In December 2020 the owner of cleaning service for industrial premises contacted
 
 We made a decision to develop software to realize several related sheets, which would exchange data using Google Apps Scripts. After the two weeks of development, we had a beta of an application. During the month of testing by me and the customer's team, we had end-product which the customer implements to the business successfully. The product performs the functions assigned at the time of the writing this intro. It's one of the reasons that I decided to publicate the source code for my readers.
 
-## Development the documentation
+## Development of documentation
 
 Now I'm working on the documentantion and the test version of this application. I have the following reasons for that:
 
