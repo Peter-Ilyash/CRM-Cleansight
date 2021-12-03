@@ -29,3 +29,8 @@ Now I'm working on the documentantion and the test version of this application. 
 ## Ethics
 
 I don't publicate any personal or confidential data of the customer or them business. They interest only final result. They are looking at the application as a business tool, not a commercial product for distribution. This is the reason it is ethical to make the source code public.
+
+## Technologies
+
+<img alt="google-apps-scripts" src="https://img.shields.io/badge/google apps script-e16449.svg?&style=for-the-badge&logo=google&logoColor=fff&logoWidth=20&labelColor=f26c4f" />&nbsp;
+<img alt="javascript" src="https://img.shields.io/badge/javascript-e16449.svg?&style=for-the-badge&logo=javascript&logoColor=fff&logoWidth=20&labelColor=f26c4f" />&nbsp;
